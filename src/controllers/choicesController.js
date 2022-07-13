@@ -1,8 +1,15 @@
 import { db, objectId } from "../dbStrategy/mongo.js";
+import { choiceSchema } from "../schemas/choicesSchema.js";
 
 export async function insertChoice(req, res) {
 
     const { title, poolId } = req.body;
+
+    const validation = choiceSchema.validate(req.body)
+
+    if (validation.error) {
+        return res.sendStatus(422);
+    }
 
     try {
 
