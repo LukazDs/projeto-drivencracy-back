@@ -1,5 +1,6 @@
 import { db, objectId } from "../dbStrategy/mongo.js";
 import { choiceSchema } from "../schemas/choicesSchema.js";
+import dayjs from "dayjs";
 
 export async function insertChoice(req, res) {
 
@@ -13,10 +14,10 @@ export async function insertChoice(req, res) {
 
     try {
 
-        const pollsDb = await db.collection("polls")
+        const pollDb = await db.collection("polls")
             .findOne({ _id: new objectId(poolId) });
 
-        if (!pollsDb) {
+        if (!pollDb) {
             res.sendStatus(404);
             return;
         }
@@ -26,6 +27,14 @@ export async function insertChoice(req, res) {
 
         if (choicesDb) {
             res.sendStatus(409);
+            return;
+        }
+
+        const date1 = new Date(dayjs().format('YYYY-MM-DD hh:mm'));
+        const date2 = new Date(pollDb.expireAt);
+
+        if (date1 > date2) {
+            res.sendStatus(403)
             return;
         }
 
