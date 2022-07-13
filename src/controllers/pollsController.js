@@ -14,12 +14,24 @@ export async function insertPoll(req, res) {
     try {
 
         const expireAt = poll.expireAt.length === 0 
-            ? dayjs().add(30, 'day').format("YY-MM-DD hh:mm")
+            ? dayjs().add(30, 'day').format("YYYY-MM-DD hh:mm")
             : poll.expireAt;
 
         await db.collection("polls").insertOne({title: poll.title, expireAt})
 
-        res.status(201).send('Post criado com sucesso');
+        res.status(201).send('Poll criada com sucesso');
+
+    } catch (error) {
+        res.sendStatus(500);
+    }
+}
+
+export async function getPolls(_req, res) {
+
+    try {
+
+        const polls = await db.collection("polls").find().toArray();
+        res.status(201).send(polls);
 
     } catch (error) {
         res.sendStatus(500);
