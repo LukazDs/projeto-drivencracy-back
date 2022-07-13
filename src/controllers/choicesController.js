@@ -13,11 +13,19 @@ export async function insertChoice(req, res) {
 
     try {
 
-        const choiceDb = await db.collection("polls")
-            .findOne({_id: new objectId(poolId) });
+        const pollsDb = await db.collection("polls")
+            .findOne({ _id: new objectId(poolId) });
 
-        if (!choiceDb) {
+        if (!pollsDb) {
             res.sendStatus(404);
+            return;
+        }
+
+        const choicesDb = await db.collection("choices")
+            .findOne({ title });
+
+        if (choicesDb) {
+            res.sendStatus(409);
             return;
         }
 
