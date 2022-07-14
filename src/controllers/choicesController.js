@@ -23,7 +23,7 @@ export async function insertChoice(req, res) {
         }
 
         const choicesDb = await db.collection("choices")
-            .findOne({ title });
+            .findOne({ title, poolId });
 
         if (choicesDb) {
             res.sendStatus(409);
