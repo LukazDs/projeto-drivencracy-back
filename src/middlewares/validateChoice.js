@@ -23,8 +23,6 @@ async function validateChoice(req, res, next) {
 
   res.locals = { pollDb, choicesDb };
 
-  console.log(pollDb)
-
   next();
 }
 
