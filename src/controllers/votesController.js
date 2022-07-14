@@ -58,6 +58,7 @@ export async function getResultVote(req, res) {
         .find({ poolId: id }).toArray();
 
         let choiceVotes = await db.collection("votes").find().toArray();
+        
         let newChoicesVotes = [];
         let majorChoicesVotes = [];
         let titleChoice = "";

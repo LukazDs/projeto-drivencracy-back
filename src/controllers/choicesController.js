@@ -1,10 +1,12 @@
-import { db, objectId } from "../dbStrategy/mongo.js";
+import { db } from "../dbStrategy/mongo.js";
 import { choiceSchema } from "../schemas/choicesSchema.js";
 import dayjs from "dayjs";
 
 export async function insertChoice(req, res) {
 
     const { title, poolId } = req.body;
+
+    const pollDb = res.locals.pollDb;
 
     const validation = choiceSchema.validate(req.body)
 
@@ -13,14 +15,6 @@ export async function insertChoice(req, res) {
     }
 
     try {
-
-        const pollDb = await db.collection("polls")
-            .findOne({ _id: new objectId(poolId) });
-
-        if (!pollDb) {
-            res.sendStatus(404);
-            return;
-        }
 
         const choicesDb = await db.collection("choices")
             .findOne({ title, poolId });
