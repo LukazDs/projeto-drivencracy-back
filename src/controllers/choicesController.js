@@ -34,7 +34,7 @@ export async function insertChoice(req, res) {
         const date2 = new Date(pollDb.expireAt);
 
         if (date1 > date2) {
-            res.sendStatus(403)
+            res.sendStatus(403);
             return;
         }
 

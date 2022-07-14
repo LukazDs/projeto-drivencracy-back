@@ -7,9 +7,10 @@ export async function insertVote(req, res) {
 
     try {
 
-        const choiceDb = await db.collection("choices").findOne({ _id: new objectId(id) });
+        const choiceDb = await db.collection("choices")
+            .findOne({ _id: new objectId(id) });
 
-        if(!choiceDb) {
+        if (!choiceDb) {
             res.sendStatus(404);
             return;
         }
@@ -19,6 +20,17 @@ export async function insertVote(req, res) {
                 choiceId: id,
                 createdAt: dayjs().format("YYYY-MM-DD hh:mm")
             });
+        
+        const pollDb = await db.collection("polls")
+            .findOne({ _id: new objectId(choiceDb.poolId) });
+
+        const date1 = new Date(dayjs().format('YYYY-MM-DD hh:mm'));
+        const date2 = new Date(pollDb.expireAt);
+
+        if (date1 > date2) {
+            res.sendStatus(403);
+            return;
+        }
 
         res.status(201).send("Voto registrado com sucesso");
 
