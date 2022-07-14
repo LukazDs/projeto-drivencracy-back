@@ -5,15 +5,9 @@ export async function insertVote(req, res) {
 
     const { id } = req.params;
 
+    const { choiceDb } = res.locals;
+
     try {
-
-        const choiceDb = await db.collection("choices")
-            .findOne({ _id: new objectId(id) });
-
-        if (!choiceDb) {
-            res.sendStatus(404);
-            return;
-        }
 
         await db.collection("votes")
             .insertOne({

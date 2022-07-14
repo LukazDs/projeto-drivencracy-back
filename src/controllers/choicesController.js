@@ -6,7 +6,7 @@ export async function insertChoice(req, res) {
 
     const { title, poolId } = req.body;
 
-    const pollDb = res.locals.pollDb;
+    const { pollDb } = res.locals;
 
     const validation = choiceSchema.validate(req.body)
 
@@ -15,14 +15,6 @@ export async function insertChoice(req, res) {
     }
 
     try {
-
-        const choicesDb = await db.collection("choices")
-            .findOne({ title, poolId });
-
-        if (choicesDb) {
-            res.sendStatus(409);
-            return;
-        }
 
         const date1 = new Date(dayjs().format('YYYY-MM-DD hh:mm'));
         const date2 = new Date(pollDb.expireAt);
@@ -39,7 +31,6 @@ export async function insertChoice(req, res) {
     } catch (error) {
         res.sendStatus(500);
     }
-
 }
 
 export async function getChoice(req, res) {
@@ -47,12 +38,12 @@ export async function getChoice(req, res) {
     const { id } = req.params;
 
     const pollsDb = await db.collection("choices")
-            .find({ poolId: id }).toArray();
+        .find({ poolId: id }).toArray();
 
-        if (pollsDb.length === 0) {
-            res.status(404).send("Id não encontrado!!!");
-            return;
-        }
+    if (pollsDb.length === 0) {
+        res.status(404).send("Id não encontrado!!!");
+        return;
+    }
 
     try {
 
