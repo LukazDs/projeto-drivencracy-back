@@ -52,15 +52,15 @@ export async function getChoice(req, res) {
 
     const { id } = req.params;
 
-    try {
-
-        const pollsDb = await db.collection("choices")
+    const pollsDb = await db.collection("choices")
             .find({ poolId: id }).toArray();
 
         if (pollsDb.length === 0) {
             res.status(404).send("Id não encontrado!!!");
             return;
         }
+
+    try {
 
         res.status(201).send(pollsDb);
 

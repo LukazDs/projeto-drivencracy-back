@@ -7,10 +7,18 @@ export async function insertVote(req, res) {
 
     try {
 
-        await db.collection("votes").insertOne({ choiceId: id});
-        //expireAt: dayjs().add(30, 'day').format("YYYY-MM-DD hh:mm")
+        const choiceDb = await db.collection("choices").findOne({ _id: new objectId(id) });
 
-        console.log(await db.collection("votes").find().toArray())
+        if(!choiceDb) {
+            res.sendStatus(404);
+            return;
+        }
+
+        await db.collection("votes")
+            .insertOne({
+                choiceId: id,
+                createdAt: dayjs().format("YYYY-MM-DD hh:mm")
+            });
 
         res.status(201).send("Voto registrado com sucesso");
 
