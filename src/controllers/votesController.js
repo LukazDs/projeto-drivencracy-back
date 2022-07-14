@@ -20,7 +20,7 @@ export async function insertVote(req, res) {
                 choiceId: id,
                 createdAt: dayjs().format("YYYY-MM-DD hh:mm")
             });
-        
+
         const pollDb = await db.collection("polls")
             .findOne({ _id: new objectId(choiceDb.poolId) });
 
@@ -33,6 +33,49 @@ export async function insertVote(req, res) {
         }
 
         res.status(201).send("Voto registrado com sucesso");
+
+    } catch (error) {
+        res.sendStatus(500);
+    }
+
+}
+
+export async function getResultVote(req, res) {
+
+    const { id } = req.params;
+
+    try {
+
+        const choiceDb = await db.collection("choices")
+            .find({ poolId: id }).toArray();
+
+        const pollDb = await db.collection("polls")
+            .findOne({ _id: new objectId(id) });
+
+        let choiceVotes = await db.collection("votes").find().toArray();
+        let newChoicesVotes = [];
+        let majorChoicesVotes = [];
+        let titleChoice = "";
+
+        for(let i = 0; i < choiceDb.length; i ++) {
+
+            newChoicesVotes = await choiceVotes.filter(v => 
+                v.choiceId === `${choiceDb[i]._id}`);
+            
+            if(newChoicesVotes.length > majorChoicesVotes.length) {
+                majorChoicesVotes = await newChoicesVotes;
+                titleChoice = `${choiceDb[i].title}`;
+            }
+        }
+
+        const infoPoll = {
+            ...pollDb,
+            result: {
+                title: titleChoice,
+                votes: majorChoicesVotes.length}
+        }
+
+        res.send(infoPoll);
 
     } catch (error) {
         res.sendStatus(500);
