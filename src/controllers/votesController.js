@@ -46,11 +46,16 @@ export async function getResultVote(req, res) {
 
     try {
 
-        const choiceDb = await db.collection("choices")
-            .find({ poolId: id }).toArray();
-
         const pollDb = await db.collection("polls")
             .findOne({ _id: new objectId(id) });
+        
+        if (!pollDb) {
+            res.sendStatus(404);
+            return;
+        }
+
+        const choiceDb = await db.collection("choices")
+        .find({ poolId: id }).toArray();
 
         let choiceVotes = await db.collection("votes").find().toArray();
         let newChoicesVotes = [];
